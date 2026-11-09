@@ -1,0 +1,41 @@
+101,Rice + Rajma,60.0,Main Course,1
+102,Rice + Dal,70.0,Main Course,1
+103,Butter Naan with Curry,90.0,Main Course,1
+104,Butter Kulcha with Curry,90.0,Main Course,1
+105,Tandoori Roti with Curry,70.0,Main Course,1
+106,Tandoori Paneer Paratha,90.0,Main Course,1
+107,Tandoori Aloo Paratha,70.0,Main Course,1
+108,Tandoori Paneer Tikka,100.0,Main Course,1
+201,Fresh Mixed Cut Fruit Bowl,50.0,Healthy Options,1
+202,Watermelon Bowl,40.0,Healthy Options,1
+203,Papaya Bowl,40.0,Healthy Options,1
+204,High-Protein Mixed Sprouts Salad,40.0,Healthy Options,1
+205,Boiled Moong Sprouts with Lemon,35.0,Healthy Options,1
+301,Paneer Sandwich,60.0,Snacks & Quick Bites,1
+302,Veg Sandwich,40.0,Snacks & Quick Bites,1
+303,Veg Roll,50.0,Snacks & Quick Bites,1
+304,Paneer Roll,70.0,Snacks & Quick Bites,1
+305,Plain Maggi,40.0,Snacks & Quick Bites,1
+306,Vegetable Maggi,50.0,Snacks & Quick Bites,1
+307,Cheese Maggi,60.0,Snacks & Quick Bites,1
+308,Samosa,25.0,Snacks & Quick Bites,1
+309,Bread Pakoda,30.0,Snacks & Quick Bites,1
+310,Kachori,25.0,Snacks & Quick Bites,1
+311,Vada Pav,25.0,Snacks & Quick Bites,1
+312,Veg Burger,50.0,Snacks & Quick Bites,1
+313,Paneer Hot Dog,50.0,Snacks & Quick Bites,1
+401,Chocolate Pastry,70.0,Bakery & Desserts,1
+402,Butterscotch Pastry,60.0,Bakery & Desserts,1
+403,Black Forest Pastry,60.0,Bakery & Desserts,1
+404,Chocolate Truffle Pastry,80.0,Bakery & Desserts,1
+405,Chocolate Brownie,50.0,Bakery & Desserts,1
+406,Chocolate Donut,40.0,Bakery & Desserts,1
+407,Korean Cheese Bun,60.0,Bakery & Desserts,1
+408,Chocolate Muffin,60.0,Bakery & Desserts,1
+409,Blueberry Cheesecake (Eggless),150.0,Bakery & Desserts,1
+410,Biscoff Cheesecake (Eggless),200.0,Bakery & Desserts,1
+501,Tea,20.0,Beverages,1
+502,Coffee,20.0,Beverages,1
+503,Oreo Milkshake,70.0,Beverages,1
+504,KitKat Milkshake,70.0,Beverages,1
+505,Banana Milkshake,60.0,Beverages,1

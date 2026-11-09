@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RV University | Canteen Pre-Order System</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="logo-badge">RVU</div>
+      <div>
+        <h1>Campus Canteen Hub</h1>
+        <p class="subtitle">MM Foods &bull; RV University Pre-Order Engine</p>
+      </div>
+    </div>
+    
+    <div class="role-switcher">
+      <button id="btnRoleStudent" class="role-btn active" type="button" onclick="switchView('student')">Student Portal</button>
+      <button id="btnRoleFaculty" class="role-btn" type="button" onclick="switchView('faculty')">Faculty Portal 🎖️</button>
+      <button id="btnRoleStaff" class="role-btn" type="button" onclick="switchView('staff')">Staff Queue Console</button>
+    </div>
+  </header>
+
+  <!-- Modal Popup (Stays visible until user clicks OK) -->
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header" id="modalHeaderBg">
+        <h3 id="modalTitle">Notice</h3>
+      </div>
+      <div class="modal-body" id="modalMessage">
+        <!-- Message populated by JS -->
+      </div>
+      <div class="modal-footer">
+        <button id="btnModalClose" class="btn-modal-ok" type="button" onclick="closeModal()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- 1. STUDENT & FACULTY COMMON MENU VIEW -->
+    <section id="userSection" class="view-panel active">
+      <div class="student-layout">
+        
+        <!-- Left: Menu Explorer -->
+        <div class="menu-column">
+          <!-- Priority Notice for Faculty -->
+          <div id="facultyNoticeBanner" class="faculty-banner hidden">
+            <span>🎖️ <strong>Faculty Express Priority Ordering Active:</strong> Orders placed here are flagged with high priority for the kitchen counter.</span>
+          </div>
+
+          <div class="filter-bar" id="categoryBar">
+            <button class="filter-pill active" type="button" onclick="filterCategory('All')">All</button>
+            <button class="filter-pill" type="button" onclick="filterCategory('Main Course')">Main Course</button>
+            <button class="filter-pill" type="button" onclick="filterCategory('Healthy Options')">Healthy</button>
+            <button class="filter-pill" type="button" onclick="filterCategory('Snacks & Quick Bites')">Snacks</button>
+            <button class="filter-pill" type="button" onclick="filterCategory('Bakery & Desserts')">Bakery</button>
+            <button class="filter-pill" type="button" onclick="filterCategory('Beverages')">Beverages</button>
+          </div>
+
+          <div class="menu-grid" id="menuGrid">
+            <!-- Dynamic Menu items -->
+          </div>
+        </div>
+
+        <!-- Right: Order Cart & Token -->
+        <div class="cart-column">
+          <div class="card cart-card">
+            <h2 class="card-title" id="cartCardTitle">Student Order Cart</h2>
+            
+            <div class="user-inputs">
+              <label id="lblName">Student Name</label>
+              <input type="text" id="custName" placeholder="Enter student name" autocomplete="off">
+              
+              <label id="lblId">Student ID / USN</label>
+              <input type="text" id="custId" placeholder="Enter student ID" autocomplete="off">
+
+              <!-- Phone Number: Only visible for students, hidden for faculty -->
+              <div id="phoneFieldGroup">
+                <label id="lblPhone">Phone Number</label>
+                <input type="tel" id="custPhone" placeholder="Enter 10-digit mobile number" maxlength="10" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="cart-items" id="cartContainer">
+              <p class="empty-state">Cart is currently empty.<br>Add items from the menu.</p>
+            </div>
+
+            <div class="cart-summary">
+              <div class="summary-line">
+                <span>Subtotal</span>
+                <span id="subtotalVal">₹0.00</span>
+              </div>
+              <div class="summary-line total-line">
+                <span>Total Payable</span>
+                <span id="totalVal">₹0.00</span>
+              </div>
+            </div>
+
+            <button id="btnPlaceOrder" class="btn-primary" type="button" onclick="placeOrder(event)">Confirm & Generate Token</button>
+
+            <!-- Active Token Card with Itemized Order Details -->
+            <div id="tokenResult" class="token-banner hidden">
+              <div class="token-header" id="displayTokenHeader">YOUR ACTIVE TOKEN</div>
+              <div class="token-number" id="displayToken">#C-101</div>
+              <p id="displayOrderDetails" style="font-size:0.9rem; margin-bottom: 6px;">Status: <strong class="status-tag status-pending">PENDING</strong></p>
+
+              <!-- Itemized Table Matching Screenshot -->
+              <div class="order-details-box">
+                <h4 class="order-details-title">Order Details</h4>
+                <table class="receipt-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;">Food item</th>
+                      <th style="text-align:center;">Qty</th>
+                      <th style="text-align:right;">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tokenItemsList">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="token-hint" id="displayTokenHint" style="margin-top:10px;">Show this token number at the canteen counter for pickup.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. STAFF CONSOLE VIEW -->
+    <section id="staffSection" class="view-panel">
+      <div class="staff-header">
+        <div>
+          <h2>Kitchen Order Display (KOD)</h2>
+          <p class="subtitle">Live queue management powered by C++ Order Queue Engine</p>
+        </div>
+        <button class="btn-refresh" type="button" onclick="loadStaffOrders()">Refresh Orders</button>
+      </div>
+
+      <div class="orders-table-wrapper">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>Customer Details & Role</th>
+              <th>Time</th>
+              <th>Items Ordered</th>
+              <th>Total (₹)</th>
+              <th>Current Status</th>
+              <th>Action / State Transition</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <!-- Dynamic Orders table -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

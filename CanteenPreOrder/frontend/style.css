@@ -1,0 +1,604 @@
+:root {
+  --rvu-primary: #0F2C59;
+  --rvu-secondary: #D35400;
+  --rvu-accent: #E67E22;
+  --bg-canvas: #F4F6F9;
+  --card-bg: #FFFFFF;
+  --text-dark: #1E293B;
+  --text-muted: #64748B;
+  --border-light: #E2E8F0;
+  --status-pending: #F39C12;
+  --status-preparing: #2980B9;
+  --status-ready: #27AE60;
+  --faculty-color: #6B21A8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--rvu-primary);
+  color: white;
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(15, 44, 89, 0.15);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-badge {
+  background: var(--rvu-secondary);
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #CBD5E1;
+  margin-top: 2px;
+}
+
+.role-switcher {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.role-btn {
+  background: transparent;
+  border: none;
+  color: #E2E8F0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-btn.active {
+  background: white;
+  color: var(--rvu-primary);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Faculty Banner */
+.faculty-banner {
+  background: #F3E8FF;
+  border: 1.5px solid #C084FC;
+  color: #581C87;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
+
+.faculty-banner.hidden {
+  display: none !important;
+}
+
+/* Main Layout */
+.container {
+  max-width: 1300px;
+  margin: 1.8rem auto;
+  padding: 0 1.5rem;
+}
+
+.view-panel {
+  display: none;
+}
+
+.view-panel.active {
+  display: block;
+}
+
+.student-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.8rem;
+}
+
+/* Category Filter */
+.filter-bar {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  margin-bottom: 1.2rem;
+  padding-bottom: 4px;
+}
+
+.filter-pill {
+  background: white;
+  border: 1px solid var(--border-light);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.filter-pill.active, .filter-pill:hover {
+  background: var(--rvu-secondary);
+  color: white;
+  border-color: var(--rvu-secondary);
+}
+
+/* Menu Grid */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
+.food-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.food-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.food-category {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--rvu-accent);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.food-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 6px 0;
+}
+
+.food-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.food-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--rvu-primary);
+}
+
+.btn-add {
+  background: #EEF2F6;
+  border: none;
+  color: var(--rvu-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-add:hover {
+  background: var(--rvu-primary);
+  color: white;
+}
+
+/* Cart Panel */
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  padding: 1.5rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--rvu-primary);
+}
+
+.user-inputs {
+  margin-bottom: 1rem;
+}
+
+.user-inputs label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 4px;
+  margin-top: 8px;
+}
+
+.user-inputs input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.user-inputs input:focus {
+  border-color: var(--rvu-primary);
+}
+
+.cart-items {
+  max-height: 240px;
+  overflow-y: auto;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0.8rem 0;
+  margin: 1rem 0;
+}
+
+.empty-state {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.cart-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.88rem;
+}
+
+.cart-qty-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-qty {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-light);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cart-summary {
+  margin-top: 0.8rem;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.total-line {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--rvu-primary);
+  border-top: 1px dashed var(--border-light);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--rvu-secondary);
+  color: white;
+  border: none;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #ba4700;
+}
+
+/* Active Token Card */
+.token-banner {
+  margin-top: 1.2rem;
+  background: #F0FDF4;
+  border: 2px solid #86EFAC;
+  padding: 1.2rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.token-banner.faculty-token-banner {
+  background: #FAF5FF;
+  border: 2px solid #C084FC;
+}
+
+.token-banner.hidden {
+  display: none !important;
+}
+
+.token-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #15803D;
+  letter-spacing: 1px;
+}
+
+.token-number {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--rvu-primary);
+  margin: 6px 0;
+}
+
+.token-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* Itemized Details Table Matching Image */
+.order-details-box {
+  margin-top: 12px;
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: left;
+}
+
+.order-details-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.receipt-table th {
+  padding: 6px 0;
+  border-bottom: 1.5px solid var(--border-light);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.receipt-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid #F1F5F9;
+  color: var(--text-dark);
+}
+
+/* Staff Table */
+.staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.btn-refresh {
+  background: white;
+  border: 1px solid var(--border-light);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.orders-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.orders-table th, .orders-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.88rem;
+}
+
+.orders-table th {
+  background: #F8FAFC;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Status Badges */
+.status-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.status-preparing {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.status-ready {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.status-completed {
+  background: #E2E8F0;
+  color: #475569;
+}
+
+.badge-faculty {
+  background: #EDE9FE;
+  color: #6D28D9;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-prep {
+  background: var(--status-preparing);
+  color: white;
+}
+
+.btn-ready {
+  background: var(--status-ready);
+  color: white;
+}
+
+/* Modal Popup */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 44, 89, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+}
+
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: popIn 0.2s ease-out;
+}
+
+.modal-header {
+  background: var(--rvu-primary);
+  color: white;
+  padding: 14px 20px;
+}
+
+.modal-header.success-header {
+  background: #15803D;
+}
+
+.modal-header.faculty-header {
+  background: #6B21A8;
+}
+
+.modal-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 22px 20px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+}
+
+.modal-footer {
+  padding: 12px 20px 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-modal-ok {
+  background: var(--rvu-secondary);
+  color: white;
+  border: none;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  transition: background 0.2s;
+}
+
+.btn-modal-ok:hover {
+  background: #ba4700;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+  }
+}
