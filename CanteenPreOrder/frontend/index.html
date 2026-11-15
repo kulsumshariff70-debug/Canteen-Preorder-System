@@ -9,6 +9,67 @@
 </head>
 <body>
 
+<!-- LOGIN & REGISTRATION OVERLAY -->
+<div id="authGate" style="position:fixed; inset:0; background:rgba(15,23,42,0.95); z-index:9999; display:flex; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#ffffff; color:#1e293b; width:100%; max-width:420px; border-radius:16px; padding:28px; box-shadow:0 20px 40px rgba(0,0,0,0.4);">
+    
+    <div style="text-align:center; margin-bottom:20px;">
+      <h2 style="margin:0; font-size:1.4rem; color:#0f172a;">RVU Campus Canteen Hub</h2>
+      <p style="margin:4px 0 0; font-size:0.85rem; color:#64748b;">Register or sign in to view menu & pre-order</p>
+    </div>
+
+    <!-- Toggle Tabs: Register First, Login Second -->
+    <div style="display:flex; background:#f1f5f9; border-radius:8px; padding:4px; margin-bottom:18px;">
+      <button id="tabRegister" type="button" onclick="switchAuthTab('register')" style="flex:1; padding:8px; border:none; border-radius:6px; font-weight:600; background:#2563eb; color:#fff; cursor:pointer;">Register</button>
+      <button id="tabLogin" type="button" onclick="switchAuthTab('login')" style="flex:1; padding:8px; border:none; border-radius:6px; font-weight:600; background:transparent; color:#475569; cursor:pointer;">Login</button>
+    </div>
+
+    <!-- Role Selector -->
+    <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Select Role *</label>
+    <select id="authRole" onchange="updateAuthForm()" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:12px;">
+      <option value="student">Student</option>
+      <option value="faculty">Faculty</option>
+    </select>
+
+    <!-- Full Name Field -->
+    <div id="nameGroup">
+      <label id="nameLabel" style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Full Name *</label>
+      <input type="text" id="authName" autocomplete="off" placeholder="Enter your full name" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:12px; box-sizing:border-box;">
+    </div>
+
+    <!-- Student ID / Department Field -->
+    <div id="idGroup">
+      <label id="idLabel" style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Student ID / USN *</label>
+      <input type="text" id="authUserId" autocomplete="off" placeholder="e.g. RVUM26MCA043" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:12px; box-sizing:border-box;">
+    </div>
+
+    <!-- Phone Number Field -->
+    <div id="phoneGroup">
+      <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Phone Number (10 digits) *</label>
+      <input type="tel" id="authPhone" autocomplete="off" maxlength="10" placeholder="e.g. 9876543210" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:12px; box-sizing:border-box;">
+    </div>
+
+    <!-- Password Field -->
+    <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px;">Password *</label>
+    <input type="password" id="authPassword" autocomplete="new-password" placeholder="Enter password" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:16px; box-sizing:border-box;">
+
+    <p id="authError" style="color:#dc2626; font-size:0.8rem; margin:0 0 12px; display:none;"></p>
+    <p id="authSuccess" style="color:#16a34a; font-size:0.85rem; font-weight:600; margin:0 0 12px; display:none;"></p>
+
+    <button id="authSubmitBtn" type="button" onclick="handleAuthSubmit()" style="width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-weight:700; font-size:0.95rem; cursor:pointer;">
+      Create Account & Login
+    </button>
+
+    <!-- Direct Access for Kitchen Staff -->
+    <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e2e8f0; text-align:center;">
+      <button type="button" onclick="enterAsStaff()" style="background:none; border:none; color:#2563eb; font-size:0.82rem; font-weight:600; cursor:pointer; text-decoration:underline;">
+        Canteen Kitchen Staff? Open Staff Queue Console →
+      </button>
+    </div>
+
+  </div>
+</div>
+
   <!-- Top Navigation Bar -->
   <header class="navbar">
     <div class="nav-brand">
@@ -23,6 +84,9 @@
       <button id="btnRoleStudent" class="role-btn active" type="button" onclick="switchView('student')">Student Portal</button>
       <button id="btnRoleFaculty" class="role-btn" type="button" onclick="switchView('faculty')">Faculty Portal 🎖️</button>
       <button id="btnRoleStaff" class="role-btn" type="button" onclick="switchView('staff')">Staff Queue Console</button>
+      <button type="button" onclick="logoutUser()" style="background:#ef4444; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; margin-left:8px;">
+      Logout
+    </button>   
     </div>
   </header>
 

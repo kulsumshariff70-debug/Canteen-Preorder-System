@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = 'https://canteen-preorder-system-hv4w.onrender.com/api';
 
 // Maintain separate active tokens per role
 let currentRole = localStorage.getItem("last_active_role") || "student";
@@ -578,3 +578,230 @@ async function updateStatus(token, nextStatus) {
     showNoticeModal("Failed to update status.");
   }
 }
+// ==========================================
+// AUTHENTICATION (LOGIN & REGISTRATION)
+// ==========================================
+let currentAuthMode = 'register';
+
+function clearAuthInputs() {
+  document.getElementById('authName').value = '';
+  document.getElementById('authUserId').value = '';
+  document.getElementById('authPhone').value = '';
+  document.getElementById('authPassword').value = '';
+  document.getElementById('authError').style.display = 'none';
+  const succEl = document.getElementById('authSuccess');
+  if (succEl) succEl.style.display = 'none';
+}
+
+function switchAuthTab(mode) {
+  currentAuthMode = mode;
+  document.getElementById('tabRegister').style.background = mode === 'register' ? '#2563eb' : 'transparent';
+  document.getElementById('tabRegister').style.color = mode === 'register' ? '#fff' : '#475569';
+  document.getElementById('tabLogin').style.background = mode === 'login' ? '#2563eb' : 'transparent';
+  document.getElementById('tabLogin').style.color = mode === 'login' ? '#fff' : '#475569';
+  document.getElementById('authSubmitBtn').innerText = mode === 'register' ? 'Create Account & Login' : 'Login & Enter Portal';
+  updateAuthForm();
+}
+
+function updateAuthForm() {
+  clearAuthInputs(); // Always clear old typed text when switching roles or tabs
+
+  const role = document.getElementById('authRole').value;
+  const nameGroup = document.getElementById('nameGroup');
+  const nameLabel = document.getElementById('nameLabel');
+  const nameInput = document.getElementById('authName');
+  const idGroup = document.getElementById('idGroup');
+  const idLabel = document.getElementById('idLabel');
+  const idInput = document.getElementById('authUserId');
+  const phoneGroup = document.getElementById('phoneGroup');
+
+  if (currentAuthMode === 'register') {
+    nameGroup.style.display = 'block';
+    idGroup.style.display = 'block';
+    phoneGroup.style.display = 'block';
+
+    if (role === 'student') {
+      nameLabel.innerText = 'Full Name *';
+      nameInput.placeholder = 'Enter your full name';
+      idLabel.innerText = 'Student ID / USN *';
+      idInput.placeholder = 'Enter Your USN';
+    } else {
+      nameLabel.innerText = 'Faculty Name *';
+      nameInput.placeholder = 'Enter faculty name';
+      idLabel.innerText = 'Department *';
+      idInput.placeholder = 'e.g. MCA / CSE / ECE';
+    }
+  } else {
+    phoneGroup.style.display = 'none';
+
+    if (role === 'student') {
+      nameGroup.style.display = 'none';
+      idGroup.style.display = 'block';
+      idLabel.innerText = 'Student ID / USN *';
+      idInput.placeholder = 'Enter Your USN';
+    } else {
+      nameGroup.style.display = 'block';
+      nameLabel.innerText = 'Faculty Name *';
+      nameInput.placeholder = 'Enter registered faculty name';
+      idGroup.style.display = 'none';
+    }
+  }
+}
+
+async function handleAuthSubmit() {
+  const role = document.getElementById('authRole').value;
+  const nameVal = document.getElementById('authName').value.trim();
+  const idVal = document.getElementById('authUserId').value.trim();
+  const phoneVal = document.getElementById('authPhone').value.trim();
+  const password = document.getElementById('authPassword').value.trim();
+  const errEl = document.getElementById('authError');
+  const succEl = document.getElementById('authSuccess');
+  errEl.style.display = 'none';
+  if (succEl) succEl.style.display = 'none';
+
+  const backendUserId = (role === 'faculty') ? nameVal : idVal;
+
+  if (currentAuthMode === 'register') {
+    if (!nameVal || !idVal || !password || !/^\d{10}$/.test(phoneVal)) {
+      errEl.innerText = 'Please fill all fields and enter a valid 10-digit phone number.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role, name: nameVal, userId: backendUserId, phone: phoneVal, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errEl.innerText = data.message || 'Registration failed.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const userObj = { role, userId: backendUserId, name: nameVal, dept: idVal, phone: phoneVal };
+      if (role === 'faculty') localStorage.setItem('dept_' + nameVal.toLowerCase(), idVal);
+
+      // Clean inline message instead of ugly browser 127.0.0.1 popup
+      if (succEl) {
+        succEl.innerText = '✓ Account created! Entering portal...';
+        succEl.style.display = 'block';
+      }
+      setTimeout(() => completeLogin(userObj), 800);
+    } catch (e) {
+      errEl.innerText = 'Server error. Ensure backend is running.';
+      errEl.style.display = 'block';
+    }
+  } else {
+    if (!backendUserId || !password) {
+      errEl.innerText = 'Please enter your credentials and password.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role, userId: backendUserId, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        errEl.innerText = data.message || 'Invalid credentials.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      const savedDept = localStorage.getItem('dept_' + data.user.name.toLowerCase()) || '';
+      if (succEl) {
+        succEl.innerText = '✓ Login successful! Entering portal...';
+        succEl.style.display = 'block';
+      }
+      setTimeout(() => completeLogin({ ...data.user, dept: savedDept }), 600);
+    } catch (e) {
+      errEl.innerText = 'Server error. Ensure backend is running.';
+      errEl.style.display = 'block';
+    }
+  }
+}
+
+function completeLogin(user) {
+  localStorage.setItem('canteenUser', JSON.stringify(user));
+  const gate = document.getElementById('authGate');
+  if (gate) gate.style.display = 'none';
+
+  // Switch automatically to Student or Faculty Portal
+  if (typeof switchView === 'function') {
+    switchView(user.role);
+  }
+
+  // Clear ALL form inputs outside the login modal first
+  document.querySelectorAll('main input').forEach(inp => {
+    if (inp.id !== 'menuSearch') inp.value = '';
+  });
+
+  // Match each <label> to the <input> IMMEDIATELY after it
+  document.querySelectorAll('main label').forEach(label => {
+    const input = label.nextElementSibling;
+    if (!input || input.tagName !== 'INPUT' || input.id === 'menuSearch') return;
+
+    const txt = label.innerText.toLowerCase();
+
+    if (user.role === 'student') {
+      if (txt.includes('student name')) input.value = user.name || '';
+      if (txt.includes('student id') || txt.includes('usn')) input.value = user.userId || '';
+      if (txt.includes('phone')) input.value = user.phone || '';
+    } else if (user.role === 'faculty') {
+      if (txt.includes('faculty name')) input.value = user.name || '';
+      if (txt.includes('department')) input.value = user.dept || '';
+    }
+  });
+}
+function enterAsStaff() {
+  document.getElementById('authGate').style.display = 'none';
+  document.querySelectorAll('main input').forEach(inp => {
+    if (inp.id !== 'menuSearch') inp.value = '';
+  });
+  if (typeof switchView === 'function') switchView('staff');
+}
+function logoutUser() {
+  localStorage.removeItem('canteenUser');
+  location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateAuthForm();
+  const saved = localStorage.getItem('canteenUser');
+  if (saved) {
+    completeLogin(JSON.parse(saved));
+  }
+});
+// Keep Student and Faculty tabs strictly isolated when switching top buttons
+const originalSwitchView = switchView;
+switchView = function(view) {
+  originalSwitchView(view);
+  const saved = localStorage.getItem('canteenUser');
+  const user = saved ? JSON.parse(saved) : null;
+
+  document.querySelectorAll('main label').forEach(label => {
+    const input = label.nextElementSibling;
+    if (!input || input.tagName !== 'INPUT' || input.id === 'menuSearch') return;
+    const txt = label.innerText.toLowerCase();
+
+    if (user && user.role === view && view === 'student') {
+      if (txt.includes('student name')) input.value = user.name || '';
+      else if (txt.includes('student id') || txt.includes('usn')) input.value = user.userId || '';
+      else if (txt.includes('phone')) input.value = user.phone || '';
+      else input.value = '';
+    } else if (user && user.role === view && view === 'faculty') {
+      if (txt.includes('faculty name')) input.value = user.name || '';
+      else if (txt.includes('department')) input.value = user.dept || '';
+      else input.value = '';
+    } else {
+      // Different role tab clicked -> keep completely blank!
+      input.value = '';
+    }
+  });
+};
