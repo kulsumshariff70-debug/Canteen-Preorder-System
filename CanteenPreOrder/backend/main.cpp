@@ -205,7 +205,93 @@ int main() {
     std::cout << "  RV UNIVERSITY - CANTEEN PRE-ORDER SYSTEM BACKEND   \n";
     std::cout << "  Server running at: http://localhost:8080           \n";
     std::cout << "====================================================\n";
+// --- 1. REGISTER ENDPOINT (Saves to users.txt) ---
+    svr.Post("/api/register", [](const httplib::Request& req, httplib::Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        
+        auto getVal = [&](const std::string& key) -> std::string {
+            std::string search = "\"" + key + "\":\"";
+            size_t pos = req.body.find(search);
+            if (pos == std::string::npos) return "";
+            pos += search.length();
+            size_t end = req.body.find("\"", pos);
+            return req.body.substr(pos, end - pos);
+        };
 
+        std::string role = getVal("role");
+        std::string name = getVal("name");
+        std::string userId = getVal("userId");
+        std::string phone = getVal("phone");
+        std::string password = getVal("password");
+
+        if (role.empty() || name.empty() || userId.empty() || password.empty()) {
+            res.status = 400;
+            res.set_content("{\"status\":\"error\",\"message\":\"All fields are mandatory\"}", "application/json");
+            return;
+        }
+
+        // Check if userId already exists
+        std::ifstream inFile("users.txt");
+        std::string line;
+        while (std::getline(inFile, line)) {
+            if (line.find("|" + userId + "|") != std::string::npos) {
+                res.status = 409;
+                res.set_content("{\"status\":\"error\",\"message\":\"ID/USN already registered. Please Login.\"}", "application/json");
+                return;
+            }
+        }
+        inFile.close();
+
+        // Save user: role|userId|name|phone|password
+        std::ofstream outFile("users.txt", std::ios::app);
+        outFile << role << "|" << userId << "|" << name << "|" << phone << "|" << password << "\n";
+        outFile.close();
+
+        res.set_content("{\"status\":\"success\",\"message\":\"Registration successful\"}", "application/json");
+    });
+
+    // --- 2. LOGIN ENDPOINT (Verifies against users.txt) ---
+    svr.Post("/api/login", [](const httplib::Request& req, httplib::Response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+
+        auto getVal = [&](const std::string& key) -> std::string {
+            std::string search = "\"" + key + "\":\"";
+            size_t pos = req.body.find(search);
+            if (pos == std::string::npos) return "";
+            pos += search.length();
+            size_t end = req.body.find("\"", pos);
+            return req.body.substr(pos, end - pos);
+        };
+
+        std::string role = getVal("role");
+        std::string userId = getVal("userId");
+        std::string password = getVal("password");
+
+        std::ifstream inFile("users.txt");
+        std::string line;
+        while (std::getline(inFile, line)) {
+            std::stringstream ss(line);
+            std::string fRole, fId, fName, fPhone, fPass;
+            std::getline(ss, fRole, '|');
+            std::getline(ss, fId, '|');
+            std::getline(ss, fName, '|');
+            std::getline(ss, fPhone, '|');
+            std::getline(ss, fPass, '|');
+
+            if (fRole == role && fId == userId && fPass == password) {
+                std::string json = "{\"status\":\"success\",\"user\":{"
+                                   "\"role\":\"" + fRole + "\","
+                                   "\"userId\":\"" + fId + "\","
+                                   "\"name\":\"" + fName + "\","
+                                   "\"phone\":\"" + fPhone + "\"}}";
+                res.set_content(json, "application/json");
+                return;
+            }
+        }
+
+        res.status = 401;
+        res.set_content("{\"status\":\"error\",\"message\":\"Invalid ID or Password\"}", "application/json");
+    });
     svr.listen("0.0.0.0", 8080);
     return 0;
 }
